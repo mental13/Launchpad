@@ -101,13 +101,6 @@ namespace Launchpad.Launcher.Handlers.Protocols.Manifest
 		}
 
 		/// <inheritdoc />
-		public override string GetChangelogMarkup()
-		{
-			var changelogURL = $"{this.Configuration.RemoteAddress}/launcher/changelog.pango";
-			return ReadRemoteFile(changelogURL);
-		}
-
-		/// <inheritdoc />
 		public override bool CanProvideBanner()
 		{
 			var bannerURL = $"{this.Configuration.RemoteAddress}/launcher/banner.png";

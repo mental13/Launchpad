@@ -42,17 +42,9 @@ namespace Launchpad.Launcher.Interface
 	/// </summary>
 	public partial class MainWindow
 	{
-		[UIElement] private readonly ImageMenuItem MenuRepairItem;
-		[UIElement] private readonly ImageMenuItem MenuReinstallItem;
-		[UIElement] private readonly ImageMenuItem MenuAboutItem;
-
-		[UIElement] private readonly TextView ChangelogTextView;
 		[UIElement] private readonly Image BannerImage;
-
 		[UIElement] private readonly Label StatusLabel;
-
 		[UIElement] private readonly ProgressBar MainProgressBar;
-		[UIElement] private readonly Button MainButton;
 
 		/// <summary>
 		/// Creates a new instance of the <see cref="MainWindow"/> class, loading its interface definition from file.
@@ -77,29 +69,6 @@ namespace Launchpad.Launcher.Interface
 		private void BindUIEvents()
 		{
 			this.DeleteEvent += OnDeleteEvent;
-			this.MenuReinstallItem.Activated += OnReinstallGameActionActivated;
-			this.MenuRepairItem.Activated += OnMenuRepairItemActivated;
-			this.MenuAboutItem.Activated += OnMenuAboutItemActivated;
-
-			this.MainButton.Clicked += OnMainButtonClicked;
-		}
-
-		/// <summary>
-		/// Displays the about window to the user.
-		/// </summary>
-		/// <param name="sender">The sending object.</param>
-		/// <param name="e">The event args.</param>
-		private void OnMenuAboutItemActivated(object sender, EventArgs e)
-		{
-			using (var builder = new Builder(Assembly.GetExecutingAssembly(), "Launchpad.Launcher.Interface.Launchpad.glade", null))
-			{
-				using (var dialog = new AboutDialog(builder.GetObject("MainAboutDialog").Handle))
-				{
-					dialog.Icon = ResourceManager.ApplicationIcon;
-					dialog.Logo = ResourceManager.ApplicationIcon;
-					dialog.Run();
-				}
-			}
 		}
 
 		/// <summary>

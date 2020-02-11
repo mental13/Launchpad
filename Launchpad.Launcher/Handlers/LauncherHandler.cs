@@ -105,42 +105,6 @@ namespace Launchpad.Launcher.Handlers
 		}
 
 		/// <summary>
-		/// Checks if the launcher can access the standard HTTP changelog.
-		/// </summary>
-		/// <returns><c>true</c> if the changelog can be accessed; otherwise, <c>false</c>.</returns>
-		public static bool CanAccessStandardChangelog()
-		{
-			if (string.IsNullOrEmpty(Configuration.ChangelogAddress.AbsoluteUri))
-			{
-				return false;
-			}
-
-			var address = Configuration.ChangelogAddress;
-
-			// Only allow HTTP URIs
-			if (!(address.Scheme == "http" || address.Scheme == "https"))
-			{
-				return false;
-			}
-
-			var headRequest = (HttpWebRequest)WebRequest.Create(address);
-			headRequest.Method = "HEAD";
-
-			try
-			{
-				using (var headResponse = (HttpWebResponse)headRequest.GetResponse())
-				{
-					return headResponse.StatusCode == HttpStatusCode.OK;
-				}
-			}
-			catch (WebException wex)
-			{
-				Log.Warn("Could not access standard changelog (WebException): " + wex.Message);
-				return false;
-			}
-		}
-
-		/// <summary>
 		/// Creates the update script on disk.
 		/// </summary>
 		/// <returns>ProcessStartInfo for the update script.</returns>

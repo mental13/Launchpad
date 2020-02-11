@@ -136,12 +136,6 @@ namespace Launchpad.Launcher.Handlers.Protocols
 		public abstract bool CanProvideBanner();
 
 		/// <summary>
-		/// Gets the changelog.
-		/// </summary>
-		/// <returns>The changelog.</returns>
-		public abstract string GetChangelogMarkup();
-
-		/// <summary>
 		/// Gets the banner.
 		/// </summary>
 		/// <returns>The banner.</returns>

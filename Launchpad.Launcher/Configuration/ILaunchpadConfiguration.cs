@@ -35,12 +35,6 @@ namespace Launchpad.Launcher.Configuration
 		// ...
 
 		/// <summary>
-		/// Gets or sets the address where the changelog is hosted.
-		/// </summary>
-		[Option(Alias = "Launcher.ChangelogAddress", DefaultValue = "http://www.example.com/launchpad/changelog/changelog.html")]
-		Uri ChangelogAddress { get; set; }
-
-		/// <summary>
 		/// Gets or sets the system target of the launcher.
 		/// </summary>
 		[Option(Alias = "Launcher.SystemTarget", DefaultValue = "Linux")]

@@ -151,13 +151,10 @@ namespace Launchpad.Launcher.Interface
 				}
 
 				this.StatusLabel.Text = LocalizationCatalog.GetString("Could not connect to server.");
-				this.MenuRepairItem.Sensitive = false;
 			}
 			else
 			{
 				LoadBanner();
-
-				LoadChangelog();
 
 				// If we can connect, proceed with the rest of our checks.
 				if (ChecksHandler.IsInitialStartup())
@@ -185,12 +182,6 @@ namespace Launchpad.Launcher.Interface
 							// If the game is not installed, offer to install it
 							Log.Info("The game has not yet been installed.");
 							SetLauncherMode(ELauncherMode.Install, false);
-
-							// Since the game has not yet been installed, disallow manual repairs
-							this.MenuRepairItem.Sensitive = false;
-
-							// and reinstalls
-							this.MenuReinstallItem.Sensitive = false;
 						}
 						else
 						{
@@ -220,23 +211,6 @@ namespace Launchpad.Launcher.Interface
 
 			this.IsInitialized = true;
 			return Task.CompletedTask;
-		}
-
-		private void LoadChangelog()
-		{
-			var protocol = PatchProtocolProvider.GetHandler();
-			var markup = protocol.GetChangelogMarkup();
-
-			// Preprocess dot lists
-			var dotRegex = new Regex("(?<=^\\s+)\\*", RegexOptions.Multiline);
-			markup = dotRegex.Replace(markup, "•");
-
-			// Preprocess line breaks
-			var regex = new Regex("(?<!\n)\n(?!\n)(?!  )");
-			markup = regex.Replace(markup, string.Empty);
-
-			var startIter = this.ChangelogTextView.Buffer.StartIter;
-			this.ChangelogTextView.Buffer.InsertMarkup(ref startIter, markup);
 		}
 
 		private void DisplayInitialStartupDialog()
@@ -324,103 +298,6 @@ namespace Launchpad.Launcher.Interface
 		{
 			// Set the global launcher mode
 			this.Mode = newMode;
-
-			// Set the UI elements to match
-			switch (newMode)
-			{
-				case ELauncherMode.Install:
-				{
-					if (isInProgress)
-					{
-						this.MainButton.Sensitive = false;
-						this.MainButton.Label = LocalizationCatalog.GetString("Installing...");
-					}
-					else
-					{
-						this.MainButton.Sensitive = true;
-						this.MainButton.Label = LocalizationCatalog.GetString("Install");
-					}
-					break;
-				}
-				case ELauncherMode.Update:
-				{
-					if (isInProgress)
-					{
-						this.MainButton.Sensitive = false;
-						this.MainButton.Label = LocalizationCatalog.GetString("Updating...");
-					}
-					else
-					{
-						this.MainButton.Sensitive = true;
-						this.MainButton.Label = LocalizationCatalog.GetString("Update");
-					}
-					break;
-				}
-				case ELauncherMode.Repair:
-				{
-					if (isInProgress)
-					{
-						this.MainButton.Sensitive = false;
-						this.MainButton.Label = LocalizationCatalog.GetString("Repairing...");
-					}
-					else
-					{
-						this.MainButton.Sensitive = true;
-						this.MainButton.Label = LocalizationCatalog.GetString("Repair");
-					}
-					break;
-				}
-				case ELauncherMode.Launch:
-				{
-					if (isInProgress)
-					{
-						this.MainButton.Sensitive = false;
-						this.MainButton.Label = LocalizationCatalog.GetString("Launching...");
-					}
-					else
-					{
-						this.MainButton.Sensitive = true;
-						this.MainButton.Label = LocalizationCatalog.GetString("Launch");
-					}
-					break;
-				}
-				case ELauncherMode.Inactive:
-				{
-					this.MenuRepairItem.Sensitive = false;
-
-					this.MainButton.Sensitive = false;
-					this.MainButton.Label = LocalizationCatalog.GetString("Inactive");
-					break;
-				}
-				default:
-				{
-					throw new ArgumentOutOfRangeException(nameof(newMode), "An invalid launcher mode was passed to SetLauncherMode.");
-				}
-			}
-
-			if (isInProgress)
-			{
-				this.MenuRepairItem.Sensitive = false;
-				this.MenuReinstallItem.Sensitive = false;
-			}
-			else
-			{
-				this.MenuRepairItem.Sensitive = true;
-				this.MenuReinstallItem.Sensitive = true;
-			}
-		}
-
-		/// <summary>
-		/// Runs a game repair, no matter what the state the installation is in.
-		/// </summary>
-		/// <param name="sender">Sender.</param>
-		/// <param name="e">E.</param>
-		private void OnMenuRepairItemActivated(object sender, EventArgs e)
-		{
-			SetLauncherMode(ELauncherMode.Repair, false);
-
-			// Simulate a button press from the user.
-			this.MainButton.Click();
 		}
 
 		/// <summary>
@@ -436,7 +313,6 @@ namespace Launchpad.Launcher.Interface
 			{
 				this.StatusLabel.Text =
 					LocalizationCatalog.GetString("The server does not provide the game for the selected platform.");
-				this.MainProgressBar.Text = string.Empty;
 
 				Log.Info
 				(
@@ -488,7 +364,6 @@ namespace Launchpad.Launcher.Interface
 				case ELauncherMode.Launch:
 				{
 					this.StatusLabel.Text = LocalizationCatalog.GetString("Idle");
-					this.MainProgressBar.Text = string.Empty;
 
 					SetLauncherMode(ELauncherMode.Launch, true);
 					this.Game.LaunchGame();
@@ -527,7 +402,6 @@ namespace Launchpad.Launcher.Interface
 			Application.Invoke((o, args) =>
 			{
 				this.StatusLabel.Text = LocalizationCatalog.GetString("The game failed to launch. Try repairing the installation.");
-				this.MainProgressBar.Text = string.Empty;
 
 				SetLauncherMode(ELauncherMode.Repair, false);
 			});
@@ -573,8 +447,7 @@ namespace Launchpad.Launcher.Interface
 		{
 			Application.Invoke((o, args) =>
 			{
-				this.MainProgressBar.Text = e.ProgressBarMessage;
-				this.StatusLabel.Text = e.IndicatorLabelMessage;
+				this.StatusLabel.Text = e.ProgressBarMessage;
 				this.MainProgressBar.Fraction = e.ProgressFraction;
 			});
 		}
@@ -594,22 +467,22 @@ namespace Launchpad.Launcher.Interface
 				{
 					case ELauncherMode.Install:
 					{
-						this.MainProgressBar.Text = LocalizationCatalog.GetString("Installation finished");
+						this.StatusLabel.Text = LocalizationCatalog.GetString("Installation finished");
 						break;
 					}
 					case ELauncherMode.Update:
 					{
-						this.MainProgressBar.Text = LocalizationCatalog.GetString("Update finished");
+						this.StatusLabel.Text = LocalizationCatalog.GetString("Update finished");
 						break;
 					}
 					case ELauncherMode.Repair:
 					{
-						this.MainProgressBar.Text = LocalizationCatalog.GetString("Repair finished");
+						this.StatusLabel.Text = LocalizationCatalog.GetString("Repair finished");
 						break;
 					}
 					default:
 					{
-						this.MainProgressBar.Text = string.Empty;
+						this.StatusLabel.Text = string.Empty;
 						break;
 					}
 				}
@@ -644,7 +517,6 @@ namespace Launchpad.Launcher.Interface
 						if (crashDialog.Run() == (int)ResponseType.Yes)
 						{
 							SetLauncherMode(ELauncherMode.Repair, false);
-							this.MainButton.Click();
 						}
 						else
 						{
