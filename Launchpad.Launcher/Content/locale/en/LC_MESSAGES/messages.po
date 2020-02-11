@@ -56,8 +56,11 @@ msgid "Idle"
 msgstr "Idle"
 
 #: Launchpad.Launcher/Interface/MainWindow.cs:124
-msgid "Failed to connect to the patch server. Please check your settings."
-msgstr "Failed to connect to the patch server. Please check your settings."
+msgid "Failed to connect to the update server."
+msgstr "Failed to connect to the update server."
+
+msgid "Checking for updates..."
+msgstr "Checking for updates..."
 
 #: Launchpad.Launcher/Interface/MainWindow.cs:129
 msgid "Could not connect to server."
