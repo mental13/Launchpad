@@ -59,6 +59,12 @@ msgstr "Idle"
 msgid "Failed to connect to the update server."
 msgstr "Failed to connect to the update server."
 
+msgid "Installation failed. Would you like to retry?"
+msgstr "Installation failed. Would you like to retry?"
+
+msgid "Update failed. You can retry or launch the local version."
+msgstr "Update failed. You can retry or launch the local version."
+
 msgid "Checking for updates..."
 msgstr "Checking for updates..."
 

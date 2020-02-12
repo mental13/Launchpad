@@ -212,7 +212,6 @@ namespace Launchpad.Launcher.Handlers.Protocols.Manifest
 			if (manifest == null)
 			{
 				Log.Error($"No manifest was found when verifying the module \"{module}\". The server files may be inaccessible or missing.");
-				OnModuleInstallationFailed(module);
 				return;
 			}
 

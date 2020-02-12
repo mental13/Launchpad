@@ -423,7 +423,80 @@ namespace Launchpad.Launcher.Interface
 				switch (this.Mode)
 				{
 					case ELauncherMode.Install:
+					{
+						using (var failDialog = new MessageDialog
+						(
+							this,
+							DialogFlags.Modal,
+							MessageType.Question,
+							ButtonsType.YesNo,
+							LocalizationCatalog.GetString("Installation failed. Would you like to retry?")
+						))
+						{
+							if (failDialog.Run() == (int)ResponseType.Yes)
+							{
+								SetLauncherMode(ELauncherMode.Install, false);
+								ExecuteMainAction();
+							}
+							else
+							{
+								Application.Quit();
+							}
+						}
+						break;
+					}
+
 					case ELauncherMode.Update:
+					{
+						using (var failDialog = new Dialog
+						(
+							string.Empty,
+							this,
+							DialogFlags.Modal
+						))
+						{
+							Label dlgText = new Label(LocalizationCatalog.GetString("Update failed. You can retry or launch the local version."));
+							Alignment container = new Alignment(0.5f, 0.5f, 1, 1);
+							container.Add(dlgText);
+							container.TopPadding = 25;
+							failDialog.Resizable = false;
+							failDialog.SetPosition(WindowPosition.CenterOnParent);
+							failDialog.ContentArea.Add(container);
+							failDialog.ContentArea.SetSizeRequest(360, 100);
+							failDialog.ContentArea.CenterWidget = container;
+							failDialog.AddButton("Launch", 1);
+							failDialog.AddButton("Retry", 2);
+							failDialog.AddButton("Quit", 3);
+							failDialog.ActionArea.LayoutStyle = ButtonBoxStyle.Expand;
+							failDialog.DefaultResponse = (ResponseType)1;
+
+							failDialog.ShowAll();
+							var dlgRes = failDialog.Run();
+							switch (dlgRes)
+							{
+								case 1:
+								{
+									SetLauncherMode(ELauncherMode.Launch, false);
+									ExecuteMainAction();
+									break;
+								}
+								case 2:
+								{
+									SetLauncherMode(ELauncherMode.Update, false);
+									ExecuteMainAction();
+									break;
+								}
+								case 3:
+								case (int)ResponseType.DeleteEvent:
+								{
+									Application.Quit();
+									break;
+								}
+							}
+						}
+						break;
+					}
+
 					case ELauncherMode.Repair:
 					{
 						// Set the mode to the same as it was, but no longer in progress.
