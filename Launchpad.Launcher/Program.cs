@@ -82,6 +82,10 @@ namespace Launchpad.Launcher
 			// Run the GTK UI
 			Gtk.Application.Init();
 
+			var style = new Gtk.CssProvider();
+			style.LoadFromPath(Path.Combine(Directory.GetCurrentDirectory(), "Resources", "style.css"));
+			Gtk.StyleContext.AddProviderForScreen(Gdk.Screen.Default, style, Gtk.StyleProviderPriority.User);
+
 			var win = MainWindow.Create();
 			win.Show();
 

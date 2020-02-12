@@ -1,0 +1,11 @@
+GtkProgressBar {
+    -GtkProgressBar-min-horizontal-bar-height: 15px;
+    border-radius: 0px;
+    border-style: none;
+    background-color: rgb(0, 178, 236);
+    background-image: none;
+}
+
+.trough {
+    background-color: rgb(212, 212, 212);
+}

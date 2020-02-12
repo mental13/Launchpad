@@ -37,9 +37,6 @@
           <object class="GtkAlignment" id="StatusAlignment">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="top_padding">12</property>
-            <property name="left_padding">6</property>
-            <property name="right_padding">6</property>
             <child>
               <object class="GtkLabel" id="StatusLabel">
                 <property name="visible">True</property>

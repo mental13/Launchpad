@@ -66,6 +66,12 @@
     <ProjectReference Include="..\Launchpad.Common\Launchpad.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\style.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
   <Target Name="CopyGTK" AfterTargets="Build">
     <ItemGroup>
       <GTKetc Include="$(SolutionDir)\lib\gtk+-3.16-bundle-win32\etc\**\*.*">
