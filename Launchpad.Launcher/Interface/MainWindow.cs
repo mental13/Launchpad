@@ -175,6 +175,16 @@ namespace Launchpad.Launcher.Interface
 					return Task.CompletedTask;
 				}
 
+				// If for some reason the game is not installed just install it again
+				if (!this.Checks.IsGameInstalled())
+				{
+					this.ShouldLaunchGame = true;
+					SetLauncherMode(ELauncherMode.Install, false);
+					ExecuteMainAction();
+
+					return Task.CompletedTask;
+				}
+
 				if (this.Checks.IsLauncherOutdated())
 				{
 					// The launcher was outdated.
