@@ -44,8 +44,8 @@ msgstr "Downloading {0}: {1} out of {2}"
 #: Launchpad.Launcher/Interface/MainWindow.cs:108
 #: Launchpad.Launcher/gtk-gui/Launchpad.Launcher.Interface.MainWindow.cs:90
 #, csharp-format
-msgid "Launchpad - {0}"
-msgstr "Launchpad - {0}"
+msgid "Launchpad"
+msgstr "Launchpad"
 
 #: Launchpad.Launcher/Interface/MainWindow.cs:114
 #: Launchpad.Launcher/Interface/MainWindow.cs:435
@@ -114,8 +114,8 @@ msgid "The server does not provide the game for the selected platform."
 msgstr "The server does not provide the game for the selected platform."
 
 #: Launchpad.Launcher/Interface/MainWindow.cs:489
-msgid "The game failed to launch. Try repairing the installation."
-msgstr "The game failed to launch. Try repairing the installation."
+msgid "The application failed to launch. Trying to repair..."
+msgstr "The application failed to launch. Trying to repair..."
 
 #: Launchpad.Launcher/Interface/MainWindow.cs:557
 msgid "Installation finished"

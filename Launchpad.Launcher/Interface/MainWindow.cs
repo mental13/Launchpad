@@ -22,7 +22,7 @@
 
 using System;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
+using System.Timers;
 using Gdk;
 using GLib;
 using Gtk;
@@ -125,8 +125,7 @@ namespace Launchpad.Launcher.Interface
 			SetLauncherMode(ELauncherMode.Inactive, false);
 
 			// Set the window title
-			this.Title = LocalizationCatalog.GetString("Launchpad - {0}", this.Configuration.GameName);
-			this.StatusLabel.Text = LocalizationCatalog.GetString("Idle");
+			this.Title = LocalizationCatalog.GetString("Launchpad");
 		}
 
 		/// <summary>
@@ -296,9 +295,6 @@ namespace Launchpad.Launcher.Interface
 			// Drop out if the current platform isn't available on the server
 			if (!this.Checks.IsPlatformAvailable(this.Configuration.SystemTarget))
 			{
-				this.StatusLabel.Text =
-					LocalizationCatalog.GetString("The server does not provide the game for the selected platform.");
-
 				Log.Info
 				(
 					$"The server does not provide files for platform \"{PlatformHelpers.GetCurrentPlatform()}\". " +
@@ -349,8 +345,10 @@ namespace Launchpad.Launcher.Interface
 				case ELauncherMode.Launch:
 				{
 					SetLauncherMode(ELauncherMode.Launch, true);
-					this.Game.LaunchGame();
 
+					Timer launchDelay = new Timer(1000);
+					launchDelay.Elapsed += LaunchEvent;
+					launchDelay.Start();
 					break;
 				}
 				default:
@@ -359,6 +357,15 @@ namespace Launchpad.Launcher.Interface
 					break;
 				}
 			}
+		}
+
+		/// <summary>
+		/// Launches the game.
+		/// </summary>
+		private void LaunchEvent(object sender, ElapsedEventArgs e)
+		{
+			this.Game.LaunchGame();
+			Application.Quit();
 		}
 
 		/// <summary>
@@ -384,9 +391,10 @@ namespace Launchpad.Launcher.Interface
 		{
 			Application.Invoke((o, args) =>
 			{
-				this.StatusLabel.Text = LocalizationCatalog.GetString("The game failed to launch. Try repairing the installation.");
+				this.StatusLabel.Text = LocalizationCatalog.GetString("The application failed to launch. Trying to repair...");
 
 				SetLauncherMode(ELauncherMode.Repair, false);
+				ExecuteMainAction();
 			});
 		}
 
@@ -430,7 +438,6 @@ namespace Launchpad.Launcher.Interface
 		{
 			Application.Invoke((o, args) =>
 			{
-				this.StatusLabel.Text = e.ProgressBarMessage;
 				this.MainProgressBar.Fraction = e.ProgressFraction;
 			});
 		}
