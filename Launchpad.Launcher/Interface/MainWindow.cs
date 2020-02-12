@@ -348,6 +348,7 @@ namespace Launchpad.Launcher.Interface
 
 					Timer launchDelay = new Timer(1000);
 					launchDelay.Elapsed += LaunchEvent;
+					launchDelay.AutoReset = false;
 					launchDelay.Start();
 					break;
 				}
@@ -364,8 +365,10 @@ namespace Launchpad.Launcher.Interface
 		/// </summary>
 		private void LaunchEvent(object sender, ElapsedEventArgs e)
 		{
-			this.Game.LaunchGame();
-			Application.Quit();
+			if (this.Game.LaunchGame() == true)
+			{
+				Application.Quit();
+			}
 		}
 
 		/// <summary>
@@ -466,6 +469,7 @@ namespace Launchpad.Launcher.Interface
 					case ELauncherMode.Repair:
 					{
 						this.StatusLabel.Text = LocalizationCatalog.GetString("Repair finished");
+						this.ShouldLaunchGame = true;
 						break;
 					}
 					default:
