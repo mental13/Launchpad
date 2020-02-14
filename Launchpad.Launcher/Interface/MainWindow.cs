@@ -141,28 +141,33 @@ namespace Launchpad.Launcher.Interface
 
 			this.StatusLabel.Text = LocalizationCatalog.GetString("Checking for updates...");
 
+			if (this.Checks.CanPatch())
+			{
+				LoadBanner();
+			}
+
+			Timer postInitDelay = new Timer(50);
+			postInitDelay.Elapsed += PostInitEvent;
+			postInitDelay.AutoReset = false;
+			postInitDelay.Start();
+
+			this.IsInitialized = true;
+			return Task.CompletedTask;
+		}
+
+		/// <summary>
+		/// Perform post init checks.
+		/// </summary>
+		private void PostInitEvent(object sender, ElapsedEventArgs e)
+		{
 			// First of all, check if we can connect to the patching service.
 			if (!this.Checks.CanPatch() || !this.Checks.IsPlatformAvailable(this.Configuration.SystemTarget))
 			{
-				using (var dialog = new MessageDialog
-				(
-					this,
-					DialogFlags.Modal,
-					MessageType.Warning,
-					ButtonsType.Ok,
-					LocalizationCatalog.GetString("Failed to connect to the update server.")
-				))
-				{
-					dialog.Run();
-				}
-
-				this.StatusLabel.Text = LocalizationCatalog.GetString("Could not connect to server.");
+				OnCannotConnectEvent();
+				return;
 			}
 			else
 			{
-				LoadBanner();
-				this.IsInitialized = true;
-
 				// If we can connect, proceed with the rest of our checks.
 				if (ChecksHandler.IsInitialStartup() && !this.Checks.IsGameInstalled())
 				{
@@ -172,7 +177,7 @@ namespace Launchpad.Launcher.Interface
 					SetLauncherMode(ELauncherMode.Install, false);
 					ExecuteMainAction();
 
-					return Task.CompletedTask;
+					return;
 				}
 
 				// If for some reason the game is not installed just install it again
@@ -182,7 +187,7 @@ namespace Launchpad.Launcher.Interface
 					SetLauncherMode(ELauncherMode.Install, false);
 					ExecuteMainAction();
 
-					return Task.CompletedTask;
+					return;
 				}
 
 				if (this.Checks.IsLauncherOutdated())
@@ -192,7 +197,7 @@ namespace Launchpad.Launcher.Interface
 					SetLauncherMode(ELauncherMode.Update, false);
 					ExecuteMainAction();
 
-					return Task.CompletedTask;
+					return;
 				}
 
 				if (this.Checks.IsGameOutdated())
@@ -203,7 +208,7 @@ namespace Launchpad.Launcher.Interface
 					SetLauncherMode(ELauncherMode.Update, false);
 					ExecuteMainAction();
 
-					return Task.CompletedTask;
+					return;
 				}
 
 				// All checks passed, so we can simply launch the game.
@@ -211,9 +216,6 @@ namespace Launchpad.Launcher.Interface
 				SetLauncherMode(ELauncherMode.Launch, false);
 				ExecuteMainAction();
 			}
-
-			this.IsInitialized = true;
-			return Task.CompletedTask;
 		}
 
 		private void LoadBanner()
@@ -302,20 +304,6 @@ namespace Launchpad.Launcher.Interface
 		/// </summary>
 		private void ExecuteMainAction()
 		{
-			// Drop out if the current platform isn't available on the server
-			if (!this.Checks.IsPlatformAvailable(this.Configuration.SystemTarget))
-			{
-				Log.Info
-				(
-					$"The server does not provide files for platform \"{PlatformHelpers.GetCurrentPlatform()}\". " +
-					"A .provides file must be present in the platforms' root directory."
-				);
-
-				SetLauncherMode(ELauncherMode.Inactive, false);
-
-				return;
-			}
-
 			// else, run the relevant function
 			switch (this.Mode)
 			{
@@ -368,6 +356,43 @@ namespace Launchpad.Launcher.Interface
 					break;
 				}
 			}
+		}
+
+		/// <summary>
+		/// Handles connot connect issues.
+		/// </summary>
+		private void OnCannotConnectEvent()
+		{
+			Application.Invoke((o, args) =>
+			{
+				this.StatusLabel.Text = LocalizationCatalog.GetString("Could not connect to server.");
+
+				using (var dialog = new MessageDialog
+				(
+					this,
+					DialogFlags.Modal,
+					MessageType.Warning,
+					ButtonsType.Ok,
+					LocalizationCatalog.GetString("Failed to connect to the update server.")
+				))
+				{
+					dialog.Run();
+				}
+
+				// even if we cannot connect to the server but the game is installed launch it anyways
+				if (this.Checks.IsGameInstalled())
+				{
+					this.ShouldLaunchGame = true;
+					SetLauncherMode(ELauncherMode.Launch, false);
+					ExecuteMainAction();
+
+					return;
+				}
+				else
+				{
+					Application.Quit();
+				}
+			});
 		}
 
 		/// <summary>
@@ -524,6 +549,7 @@ namespace Launchpad.Launcher.Interface
 		{
 			Application.Invoke((o, args) =>
 			{
+				this.StatusLabel.Text = e.IndicatorLabelMessage;
 				this.MainProgressBar.Fraction = e.ProgressFraction;
 			});
 		}
