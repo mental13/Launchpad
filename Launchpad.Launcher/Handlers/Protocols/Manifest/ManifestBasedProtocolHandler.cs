@@ -174,7 +174,6 @@ namespace Launchpad.Launcher.Handlers.Protocols.Manifest
 
 					this.ModuleUpdateProgressArgs.IndicatorLabelMessage = GetUpdateIndicatorLabelMessage
 					(
-						Path.GetFileName(fileEntry.RelativePath),
 						updatedFiles,
 						filesRequiringUpdate.Count
 					);
@@ -225,7 +224,6 @@ namespace Launchpad.Launcher.Handlers.Protocols.Manifest
 					// Prepare the progress event contents
 					this.ModuleVerifyProgressArgs.IndicatorLabelMessage = GetVerifyIndicatorLabelMessage
 					(
-						Path.GetFileName(fileEntry.RelativePath),
 						verifiedFiles,
 						manifest.Count
 					);
@@ -248,7 +246,6 @@ namespace Launchpad.Launcher.Handlers.Protocols.Manifest
 					// Prepare the progress event contents
 					this.ModuleDownloadProgressArgs.IndicatorLabelMessage = GetDownloadIndicatorLabelMessage
 					(
-						Path.GetFileName(fileEntry.RelativePath),
 						downloadedFiles,
 						brokenFiles.Count
 					);
@@ -341,7 +338,6 @@ namespace Launchpad.Launcher.Handlers.Protocols.Manifest
 				// Prepare the progress event contents
 				this.ModuleDownloadProgressArgs.IndicatorLabelMessage = GetDownloadIndicatorLabelMessage
 				(
-					Path.GetFileName(fileEntry.RelativePath),
 					downloadedFiles,
 					moduleManifest.Count
 				);
@@ -776,48 +772,44 @@ namespace Launchpad.Launcher.Handlers.Protocols.Manifest
 		/// Gets the indicator label message to display to the user while repairing.
 		/// </summary>
 		/// <returns>The indicator label message.</returns>
-		/// <param name="currentFilename">Current filename.</param>
 		/// <param name="verifiedFiles">N files downloaded.</param>
 		/// <param name="totalFiles">Total files to download.</param>
-		protected virtual string GetVerifyIndicatorLabelMessage(string currentFilename, int verifiedFiles, int totalFiles)
+		protected virtual string GetVerifyIndicatorLabelMessage(int verifiedFiles, int totalFiles)
 		{
-			return LocalizationCatalog.GetString("Verifying file {0} ({1} of {2})", currentFilename, verifiedFiles, totalFiles);
+			return LocalizationCatalog.GetString("Verifying files ({0} of {1})", verifiedFiles, totalFiles);
 		}
 
 		/// <summary>
 		/// Gets the indicator label message to display to the user while repairing.
 		/// </summary>
 		/// <returns>The indicator label message.</returns>
-		/// <param name="currentFilename">Current filename.</param>
 		/// <param name="updatedFiles">Number of files that have been updated.</param>
 		/// <param name="totalFiles">Total files that are to be updated.</param>
-		protected virtual string GetUpdateIndicatorLabelMessage(string currentFilename, int updatedFiles, int totalFiles)
+		protected virtual string GetUpdateIndicatorLabelMessage(int updatedFiles, int totalFiles)
 		{
-			return LocalizationCatalog.GetString("Updating file {0} ({1} of {2})", currentFilename, updatedFiles, totalFiles);
+			return LocalizationCatalog.GetString("Updating files ({0} of {1})", updatedFiles, totalFiles);
 		}
 
 		/// <summary>
 		/// Gets the indicator label message to display to the user while installing.
 		/// </summary>
 		/// <returns>The indicator label message.</returns>
-		/// <param name="currentFilename">Current filename.</param>
 		/// <param name="downloadedFiles">N files downloaded.</param>
 		/// <param name="totalFiles">Total files to download.</param>
-		protected virtual string GetDownloadIndicatorLabelMessage(string currentFilename, int downloadedFiles, int totalFiles)
+		protected virtual string GetDownloadIndicatorLabelMessage(int downloadedFiles, int totalFiles)
 		{
-			return LocalizationCatalog.GetString("Downloading file {0} ({1} of {2})", currentFilename, downloadedFiles, totalFiles);
+			return LocalizationCatalog.GetString("Downloading files ({0} of {1})", downloadedFiles, totalFiles);
 		}
 
 		/// <summary>
 		/// Gets the progress bar message.
 		/// </summary>
 		/// <returns>The progress bar message.</returns>
-		/// <param name="filename">Filename.</param>
 		/// <param name="downloadedBytes">Downloaded bytes.</param>
 		/// <param name="totalBytes">Total bytes.</param>
-		protected virtual string GetDownloadProgressBarMessage(string filename, long downloadedBytes, long totalBytes)
+		protected virtual string GetDownloadProgressBarMessage(long downloadedBytes, long totalBytes)
 		{
-			return LocalizationCatalog.GetString("Downloading {0}: {1} out of {2}", filename, downloadedBytes, totalBytes);
+			return LocalizationCatalog.GetString("Downloading {0} out of {1}", downloadedBytes, totalBytes);
 		}
 	}
 }

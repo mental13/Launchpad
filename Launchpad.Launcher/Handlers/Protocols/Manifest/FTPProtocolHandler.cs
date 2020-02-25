@@ -267,7 +267,6 @@ namespace Launchpad.Launcher.Handlers.Protocols.Manifest
 							// Report download progress
 							this.ModuleDownloadProgressArgs.ProgressBarMessage = GetDownloadProgressBarMessage
 							(
-								Path.GetFileName(remoteURL),
 								totalBytesDownloaded,
 								fileSize
 							);
@@ -295,7 +294,6 @@ namespace Launchpad.Launcher.Handlers.Protocols.Manifest
 								// Report download progress
 								this.ModuleDownloadProgressArgs.ProgressBarMessage = GetDownloadProgressBarMessage
 								(
-									Path.GetFileName(remoteURL),
 									totalBytesDownloaded,
 									fileSize
 								);
