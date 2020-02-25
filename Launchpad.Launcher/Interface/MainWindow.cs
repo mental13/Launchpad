@@ -125,7 +125,7 @@ namespace Launchpad.Launcher.Interface
 			SetLauncherMode(ELauncherMode.Inactive, false);
 
 			// Set the window title
-			this.Title = LocalizationCatalog.GetString("Launchpad");
+			this.Title = Configuration.GameName;
 		}
 
 		/// <summary>
